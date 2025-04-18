@@ -1,17 +1,18 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 )
 
 const PORT = ":8080"
 
-func getRequest(responseWriter http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(responseWriter, "<h1>Hello, World!</h1>")
-}
-
 func main() {
-	http.HandleFunc("/", getRequest)
-	http.ListenAndServe(PORT, nil)
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
+
+	err := http.ListenAndServe(PORT, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
