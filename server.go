@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/google/uuid"
 )
 
 // ////////////////////////////////////////////////////////////////
@@ -30,12 +32,30 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	fmt.Printf("Received POST request with body: %s\n", body)
+	for {
+		logID := uuid.New()
+		path := filepath.Join(LOG_DIR, logID.String()+".json")
+		_, err := os.Stat(path)
 
-	w.WriteHeader(http.StatusCreated)
+		if os.IsNotExist(err) {
+			file, createFileErr := os.Create(path)
+			if createFileErr != nil {
+				http.Error(w, "Could not create a file to log to.", http.StatusInternalServerError)
+				return
+			}
+
+			defer file.Close()
+
+			file.Write(body)
+
+			fmt.Printf("Data logged to '%s'\n", path)
+			w.WriteHeader(http.StatusCreated)
+			break
+		}
+	}
 }
 
-// Post request - get condition
+// Post request - get study condition
 func getCondition(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
