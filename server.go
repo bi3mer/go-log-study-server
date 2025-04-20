@@ -34,13 +34,26 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// make sure log dir exists
+	////////////////////////////////////////////////////////////////////
+	// Make sure log dir exists
 	errDir := os.MkdirAll(LOG_DIR, os.ModePerm)
 	if errDir != nil {
 		log.Fatal(errDir)
 	}
 
-	// start server
+	////////////////////////////////////////////////////////////////////
+	// Make sure static directory exists before starting the server
+	dirStatic, errStatic := os.Stat("./static")
+	if os.IsNotExist(errStatic) {
+		log.Fatal("Static directory must exist", errStatic)
+	}
+
+	if !dirStatic.IsDir() {
+		log.Fatal("Found file named 'static'. Should be a directory.")
+	}
+
+	////////////////////////////////////////////////////////////////////
+	// Start server
 	http.HandleFunc("/log", dataLogger)
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
