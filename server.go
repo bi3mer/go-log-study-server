@@ -9,11 +9,14 @@ import (
 	"path/filepath"
 )
 
+// ////////////////////////////////////////////////////////////////
+// Globals
+const PORT = ":8080" // :443 for ssl
+
 var LOG_DIR = filepath.Join(".", "logs")
 
-const PORT = ":8080"
-
-// const PORT = ":443"
+// ////////////////////////////////////////////////////////////////
+// Post request - store data file
 func dataLogger(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -28,6 +31,16 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	fmt.Printf("Received POST request with body: %s\n", body)
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+// Post request - get condition
+func getCondition(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, "POST request received successfully")
@@ -55,6 +68,7 @@ func main() {
 	////////////////////////////////////////////////////////////////////
 	// Start server
 	http.HandleFunc("/log", dataLogger)
+	http.HandleFunc("/condition", getCondition)
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 
