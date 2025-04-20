@@ -26,3 +26,4 @@ go.work.sum
 
 # static directory where website stuff goes
 static/*
+logs/*

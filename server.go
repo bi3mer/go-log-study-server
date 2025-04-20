@@ -5,7 +5,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
+
+var LOG_DIR = filepath.Join(".", "logs")
 
 const PORT = ":8080"
 
@@ -30,13 +34,20 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// make sure log dir exists
+	errDir := os.MkdirAll(LOG_DIR, os.ModePerm)
+	if errDir != nil {
+		log.Fatal(errDir)
+	}
+
+	// start server
 	http.HandleFunc("/log", dataLogger)
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 
-	err := http.ListenAndServe(PORT, nil)
-	// err := http.ListenAndServeTLS(PORT, "server.crt", "server.key", nil)
-	if err != nil {
-		log.Fatal(err)
+	errServer := http.ListenAndServe(PORT, nil)
+	// errServer := http.ListenAndServeTLS(PORT, "server.crt", "server.key", nil)
+	if errServer != nil {
+		log.Fatal(errServer)
 	}
 }
