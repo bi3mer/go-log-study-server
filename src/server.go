@@ -11,13 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-// ////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////
 // Globals
 const PORT = ":8080" // :443 for ssl
 
 var LOG_DIR = filepath.Join(".", "logs")
+var BLOCK = blockNew(2, []string{"random", "mean", "distance"}}
 
-// ////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////
 // Post request - store data file
 func dataLogger(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -63,7 +64,7 @@ func getCondition(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprint(w, "POST request received successfully")
+	fmt.Fprint(w, *blockGetCondition(BLOCK))
 }
 
 func main() {
@@ -93,6 +94,9 @@ func main() {
 	http.Handle("/", fs)
 
 	errServer := http.ListenAndServe(PORT, nil)
+
+	// https://coe.northeastern.edu/computer/general-resources/vpn/
+	// https://letsencrypt.org/
 	// errServer := http.ListenAndServeTLS(PORT, "server.crt", "server.key", nil)
 	if errServer != nil {
 		log.Fatal(errServer)
