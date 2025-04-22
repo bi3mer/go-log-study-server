@@ -16,7 +16,8 @@ import (
 const PORT = ":8080" // :443 for ssl
 
 var LOG_DIR = filepath.Join(".", "logs")
-var BLOCK = blockNew(2, []string{"random", "mean", "distance"}}
+var CONDITIONS = []string{"random", "mean", "distance"}
+var BLOCK = blockNew(2, CONDITIONS)
 
 // //////////////////////////////////////////////////////////////
 // Post request - store data file
@@ -59,9 +60,12 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 // Post request - get study condition
 func getCondition(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
+		fmt.Println("Condition request was not a POST request.")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	fmt.Println("Received condition request.")
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, *blockGetCondition(BLOCK))
