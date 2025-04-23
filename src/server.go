@@ -47,7 +47,6 @@ func dataLogger(w http.ResponseWriter, r *http.Request) {
 			}
 
 			defer file.Close()
-
 			file.Write(body)
 
 			fmt.Printf("Data logged to '%s'\n", path)
@@ -67,7 +66,7 @@ func getCondition(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Received condition request.")
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, *blockGetCondition(BLOCK))
 }
 
