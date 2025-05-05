@@ -19,7 +19,7 @@ func blockNew(sizeMultiple int, conditions []string) *Block {
 	block := make([]string, len(conditions)*sizeMultiple)
 	index := 0
 	for _, c := range conditions {
-		for range 2 {
+		for range sizeMultiple {
 			block[index] = c
 			index++
 		}
